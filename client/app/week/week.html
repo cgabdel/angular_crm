@@ -1,0 +1,114 @@
+<navbar></navbar>
+<md-content flex-offset="5" flex="90">
+  <div flex-sm="100" flex-xs="100" layout="row">
+    <div flex="5">
+      <md-button class="md-fab md-mini md-primary" aria-label="Go Back" ng-click="goBack()">
+        <i class="fa fa-arrow-left"></i>
+      </md-button>
+    </div>
+
+    <div flex>
+      <md-list-item class="md-3-line">
+        <div hide-sm hide-xs>
+          <img ng-src="{{syllabus.iconurl}}" alt="MEAN" style="max-height:120px; height: auto; margin-right:20px;margin-top:10px;">
+        </div>
+        <div flex-sm="100" flex-xs="100" class="md-list-item-text" layout="column">
+          <h2>{{ syllabus.title }}</h2>
+          <h3>{{ syllabus.education }} {{ syllabus.year }}</h3>
+          <h4>{{ syllabus.academy }}, {{ syllabus.lecturer || syllabus.owner.name }}</h4>
+        </div>
+      </md-list-item>
+    </div>
+  </div>
+  <hr>
+</md-content>
+<md-content flex-offset="5" flex="90" ng-if="!editingWeekplan">
+  <div flex-sm="100" flex-xs="100" layout="column">
+    <!--//Form added in tag v2.1.14-->
+    <form name="newWeekplanForm" ng-if="isAdmin()">
+      <md-list-item style="margin-bottom:10px;">
+        <md-input-container flex="15" class="md-block">
+          <label>Week</label>
+          <input required min="1" max="43" ng-model="newWeekplan.week" type="Number" name="weekOfYear">
+          <div ng-messages="newWeekplanForm.weekOfYear.$error" role="alert">
+            <div ng-message="required">Please specify a week.</div>
+            <div ng-message="min"> Must be a weeknumber 1-43 </div>
+            <div ng-message="max"> Must be a weeknumber 1-43 </div>
+          </div>
+        </md-input-container>
+        <md-input-container flex="50" class="md-block">
+          <label>Theme</label>
+          <input ng-model="newWeekplan.teaser" type="text" md-maxlength="100" required name="teaser">
+          <div ng-messages="newWeekplanForm.teaser.$error" role="alert">
+            <div ng-message="required">Please a theme text.</div>
+            <div ng-message="md-maxlength">The theme has to be less than 100 characters long.</div>
+          </div>
+        </md-input-container>
+        <md-button ng-click="addWeekplan(newWeekplanForm)">
+          <i class="fa fa-plus"> ADD</i>
+        </md-button>
+        <md-divider></md-divider>
+      </md-list-item>
+    </form>
+    <md-list>
+      <md-list-item aria-label="Weekplan" ng-click="goToWeekPlan(weekplan, $event)" ng-repeat="weekplan in syllabus.weekplans | orderBy : '-week'">
+        <div flex flex-sm="100" flex-xs="100" layout="row">
+          <p flex="10"><i class="fa fa-calendar"></i> Week {{weekplan.week}} </p>
+          <p flex pull-right>{{weekplan.teaser}}</p>
+          <div flex="5" ng-if="isAdmin()">
+            <md-button ng-click="editWeekPlan(weekplan)" class="md-icon-button" aria-label="Open sample menu">
+              <i class="fa fa-pencil"></i>
+            </md-button>
+          </div>
+        </div>
+        <md-divider></md-divider>
+      </md-list-item>
+    </md-list>
+    <h4>Objectives:</h4>
+    <div ng-bind-html="syllabus.objectives"></div>
+  </div>
+</md-content>
+
+<md-content layout-padding flex-offset="30" flex="40" ng-if="editingWeekplan" class="animate-new-course">
+  <form name="editWeekplanForm" style="margin-bottom:10px;">
+    <md-input-container flex="25" class="md-block">
+      <label>Week</label>
+      <input required min="1" max="43" ng-model="editingWeekplan.week" type="Number" name="weekOfYear">
+      <div ng-messages="editWeekplanForm.weekOfYear.$error" role="alert">
+        <div ng-message="required">Please specify a week.</div>
+        <div ng-message="min"> Must be a weeknumber 1-43 </div>
+        <div ng-message="max"> Must be a weeknumber 1-43 </div>
+      </div>
+    </md-input-container>
+
+    <md-input-container flex class="md-block">
+      <label>Theme</label>
+      <input ng-model="editingWeekplan.teaser" type="text" md-maxlength="100" required name="teaser">
+      <div ng-messages="editWeekplanForm.teaser.$error" role="alert">
+        <div ng-message="required">Please a theme text.</div>
+        <div ng-message="md-maxlength">The theme has to be less than 100 characters long.</div>
+      </div>
+    </md-input-container>
+
+    <md-input-container flex="30" class="md-block">
+      <md-switch ng-model="editingWeekplan.enabled">{{editingWeekplan.enabled ? "Enabled" : "Disbled"}}</md-switch>
+    </md-input-container>
+
+    <div layout-gt-xs="row">
+      <md-button aria-label="Delete weekplan" class="md-raised md-danger" ng-click="deleteWeekPlan(weekplan, $event)">
+        <div style="color:darkred;">
+          <i class="fa fa-trash"></i> Delete
+        </div>
+      </md-button>
+      <p flex></p>
+      <md-button aria-label="Save changes" ng-click="saveWeekplanEdit(editWeekplanForm)" class="md-raised md-primary">
+        <i class="fa fa-floppy-o"></i> Save changes
+      </md-button>
+      <md-button aria-label="Undo changes" ng-click="undoWeekplanEdit()" class="md-raised md-warning">
+        <i class="fa fa-undo"></i> Cancel
+      </md-button>
+    </div>
+  </form>
+</md-content>
+
+<footer></footer>

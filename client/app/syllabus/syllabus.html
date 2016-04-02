@@ -1,0 +1,67 @@
+<navbar></navbar>
+
+<header class="hero-unit" id="banner">
+  <div class="container">
+    <h1>Course Planner</h1>
+  </div>
+</header>
+
+<div class="container">
+  <div class="row" ng-if="isAuthenticated()">
+    <div class="col-lg-12">
+      <h1 class="page-header">Syllabuses:</h1>
+      <form class="form-inline">
+        <div class="form-group">
+          <label class="sr-only" for="syllabusTitle">Title</label>
+          <input ng-model="newSyllabus.title" class="form-control" id="syllabusTitle" placeholder="Title">
+        </div>
+        <div class="form-group">
+          <label class="sr-only" for="syllabusLecturer">Lecturer</label>
+          <input ng-model="newSyllabus.lecturer" class="form-control" id="syllabusLecturer" placeholder="Lecturer">
+        </div>
+        <div class="form-group">
+          <label class="sr-only" for="syllabusUrl">Url</label>
+          <input ng-model="newSyllabus.iconurl" class="form-control" id="syllabusUrl" placeholder="Url for your image">
+        </div>
+        <button class="btn btn-success" ng-click="createSyllaus()">Add Syllabus</button>
+      </form>
+      <div class="form-group">
+        <label for="searchText">Search</label>
+        <input ng-model="search" class="form-control" id="searchText" placeholder="Write what you are looking for">
+      </div>
+
+
+      <div class="form-group">
+        <md-button class="md-raised md-primary" ng-click="sort('title')">Sort on title
+            <i class="fa" ng-show="propToSortOn=='title'" ng-class="{'fa-arrow-down':reverse,'fa-arrow-up':!reverse}"></i>
+        </md-button>
+        <md-button class="md-raised md-primary" ng-click="sort('lecturer')">Sort on lecturer
+            <i class="fa" ng-show="propToSortOn=='lecturer'" ng-class="{'fa-arrow-down':reverse,'fa-arrow-up':!reverse}"></i>
+        </md-button>
+      </div>
+
+      <md-list>
+        <md-subheader class="md-no-sticky">Syllabuses</md-subheader>
+        <md-list-item class="md-2-line" ng-click="goToSyllabus(syllabus)" dir-paginate="syllabus in syllabuses | orderBy:propToSortOn:reverse | filter:{ title: search } | itemsPerPage:10">
+          <img ng-src="{{syllabus.iconurl}}" class="md-avatar" alt="{{item.who}}" />
+          <div class="md-list-item-text" layout="column">
+            <h4 class="media-heading">{{syllabus.title}}</h4>
+            <h6> - {{syllabus.lecturer ? syllabus.lecturer : 'unknown'}}</h6>
+          </div>
+          <md-button ng-show="isOwner(syllabus)" class="md-secondary" ng-click="deleteSyllabus(syllabus)">Delete</md-button>
+        </md-list-item>
+      </md-list>
+
+      <dir-pagination-controls
+         max-size="10"
+         direction-links="true"
+         boundary-links="true" >
+      </dir-pagination-controls>
+
+    </div>
+  </div>
+  <div class="row" ng-if="!isAuthenticated()">
+    <h3>Login to see anything</h3>
+  </div>
+</div>
+<footer></footer>
